@@ -61,31 +61,6 @@
 
       <a href="/" class="btn btn-primary"><i class="bi bi-search"></i> Search for something else</a>
     </div>
-
-    <div class="col-lg-4">
-      <div class="card shadow-sm mb-4">
-        <div class="card-body">
-          <h6 class="card-title">Page reference</h6>
-          <p class="text-muted small mb-0">{{ item.url|default:"Not specified" }}</p>
-        </div>
-      </div>
-
-      {% if related %}
-      <div class="card shadow-sm">
-        <div class="card-body">
-          <h6 class="card-title">Related</h6>
-          <ul class="list-unstyled mb-0">
-            {% for r in related %}
-            <li class="mb-2">
-              <a href="{% url 'course-detail' r.pk %}" class="text-decoration-none">
-                <i class="bi bi-chevron-right"></i> {{ r.title }}
-              </a>
-            </li>
-            {% endfor %}
-          </ul>
-        </div>
-      </div>
-      {% endif %}
     </div>
   </div>
 </main>
