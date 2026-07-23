@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{ item.title }} - TechPanda</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+<style>
+  body { background-color: #f7f8fa; }
+  .navbar-brand { font-weight: 700; letter-spacing: .5px; }
+  .detail-hero { background: linear-gradient(135deg, #0d47a1, #1976d2); color: #fff; padding: 40px 0; }
+  .badge-category { text-transform: capitalize; font-size: .85rem; }
+  footer { background: #0d1b2a; color: #cfd8dc; }
+</style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <div class="container">
+    <a class="navbar-brand" href="/">TechPanda</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navMenu">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'category-view' 'course' %}">Courses</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'category-view' 'about' %}">About Us</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'category-view' 'placement' %}">Placement</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'category-view' 'contact' %}">Contact</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'category-view' 'blog' %}">Blogs</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<section class="detail-hero">
+  <div class="container">
+    <span class="badge bg-warning text-dark badge-category mb-2">{{ item.get_category_display }}</span>
+    <h1 class="fw-bold">{{ item.title }}</h1>
+    <a href="/" class="btn btn-outline-light btn-sm mt-2"><i class="bi bi-arrow-left"></i> Back to Search</a>
+  </div>
+</section>
+
+<main class="container py-5">
+  <div class="row">
+    <div class="col-lg-8">
+      <div class="card shadow-sm mb-4">
+        <div class="card-body">
+          <h5 class="card-title">Details</h5>
+          <p class="card-text">{{ item.description }}</p>
+
+          {% if item.keywords %}
+          <hr>
+          <p class="mb-1 text-muted small">Related topics:</p>
+          <p class="text-muted small">{{ item.keywords }}</p>
+          {% endif %}
+        </div>
+      </div>
+
+      <a href="/" class="btn btn-primary"><i class="bi bi-search"></i> Search for something else</a>
+    </div>
+
+    <div class="col-lg-4">
+      <div class="card shadow-sm mb-4">
+        <div class="card-body">
+          <h6 class="card-title">Page reference</h6>
+          <p class="text-muted small mb-0">{{ item.url|default:"Not specified" }}</p>
+        </div>
+      </div>
+
+      {% if related %}
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h6 class="card-title">Related</h6>
+          <ul class="list-unstyled mb-0">
+            {% for r in related %}
+            <li class="mb-2">
+              <a href="{% url 'course-detail' r.pk %}" class="text-decoration-none">
+                <i class="bi bi-chevron-right"></i> {{ r.title }}
+              </a>
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</main>
+
+<footer class="py-4">
+  <div class="container text-center">
+    <p class="mb-1">Chennai's leading software training institute</p>
+    <p class="mb-0">
+      <i class="bi bi-telephone"></i> +91 98846 78282 &nbsp;|&nbsp;
+      <i class="bi bi-envelope"></i> admin@itechpanda.com
+    </p>
+    <p class="small text-muted mt-2 mb-0">&copy; 2026 TechPanda</p>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TechPanda - Software Training Institute in Chennai</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+<style>
+  body { background-color: #f7f8fa; }
+  .navbar-brand { font-weight: 700; letter-spacing: .5px; }
+  .hero { background: linear-gradient(135deg, #0d47a1, #1976d2); color: #fff; padding: 60px 0; }
+  .search-wrap { max-width: 700px; margin: 0 auto; position: relative; }
+  #suggestions {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 1050;
+    max-height: 360px;
+    overflow-y: auto;
+    display: none;
+    border-radius: 0 0 .5rem .5rem;
+  }
+  #suggestions .list-group-item { cursor: pointer; text-align: left; }
+  #suggestions .list-group-item:hover { background-color: #f0f6ff; }
+  .badge-category { text-transform: capitalize; }
+  .browse-card { transition: transform .15s ease; text-decoration: none; color: inherit; }
+  .browse-card:hover { transform: translateY(-3px); }
+  footer { background: #0d1b2a; color: #cfd8dc; }
+  footer a { color: #90caf9; text-decoration: none; }
+</style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <div class="container">
+    <a class="navbar-brand" href="/">TechPanda</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navMenu">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'category-view' 'course' %}">Courses</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'category-view' 'about' %}">About Us</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'category-view' 'placement' %}">Placement</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'category-view' 'contact' %}">Contact</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'category-view' 'blog' %}">Blogs</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<section class="hero text-center">
+  <div class="container">
+    <h1 class="fw-bold mb-3">Software Training Institute in Chennai</h1>
+    <p class="lead mb-4">Start typing to search this website — a list of matching results appears below the search box. Click a result to see full details.</p>
+
+    <div class="search-wrap">
+      <div class="input-group input-group-lg shadow">
+        <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
+        <input type="text" id="searchInput" class="form-control" placeholder="e.g. Python, placement, AWS, contact..." autocomplete="off">
+      </div>
+      <div class="list-group shadow" id="suggestions"></div>
+      <div class="form-text text-white-50 mt-2">Results are matched only against TechPanda's own website content.</div>
+    </div>
+  </div>
+</section>
+
+<main class="container py-5" id="browse">
+  <h3 class="mb-4">Browse All Courses &amp; Information</h3>
+  <div class="row g-4">
+    {% for item in items %}
+    <div class="col-md-4 col-sm-6">
+      <a href="{% url 'course-detail' item.pk %}" class="browse-card">
+        <div class="card h-100 shadow-sm">
+          <div class="card-body">
+            <span class="badge bg-primary badge-category mb-2">{{ item.get_category_display }}</span>
+            <h5 class="card-title">{{ item.title }}</h5>
+            <p class="card-text text-muted small">{{ item.description|truncatewords:18 }}</p>
+          </div>
+        </div>
+      </a>
+    </div>
+    {% endfor %}
+  </div>
+</main>
+
+<footer class="py-4 mt-auto">
+  <div class="container text-center">
+    <p class="mb-1">Chennai's leading software training institute</p>
+    <p class="mb-0">
+      <i class="bi bi-telephone"></i> +91 98846 78282 &nbsp;|&nbsp;
+      <i class="bi bi-envelope"></i> admin@itechpanda.com
+    </p>
+    <p class="small text-muted mt-2 mb-0">&copy; 2026 TechPanda</p>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+const searchInput = document.getElementById('searchInput');
+const suggestions = document.getElementById('suggestions');
+
+const categoryColors = {
+  home: 'primary', course: 'success', about: 'info',
+  placement: 'warning', contact: 'secondary', blog: 'dark', faq: 'danger'
+};
+
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+function showSuggestions(data) {
+  suggestions.innerHTML = '';
+
+  if (data.count === 0) {
+    suggestions.innerHTML = `<div class="list-group-item text-muted">
+        <i class="bi bi-emoji-frown"></i> No result found for "${escapeHtml(data.query)}"
+      </div>`;
+    suggestions.style.display = 'block';
+    return;
+  }
+
+  if (data.ai_suggested) {
+    const note = document.createElement('div');
+    note.className = 'list-group-item bg-light text-primary small';
+    note.innerHTML = '<i class="bi bi-stars"></i> No exact keyword match — AI found this for you:';
+    suggestions.appendChild(note);
+  }
+
+  data.results.forEach(item => {
+    const color = categoryColors[item.category] || 'primary';
+    const row = document.createElement('a');
+    row.href = `/course/${item.id}/`;
+    row.className = 'list-group-item list-group-item-action d-flex justify-content-between align-items-center';
+    row.innerHTML = `
+      <span>
+        <span class="badge bg-${color} badge-category me-2">${item.category_display}</span>
+        ${escapeHtml(item.title)}
+      </span>
+      <i class="bi bi-arrow-right-short"></i>`;
+    suggestions.appendChild(row);
+  });
+
+  suggestions.style.display = 'block';
+}
+
+let debounceTimer;
+const DEBOUNCE_MS = 250;
+
+searchInput.addEventListener('input', () => {
+  clearTimeout(debounceTimer);
+  const q = searchInput.value.trim();
+
+  if (!q) {
+    suggestions.style.display = 'none';
+    suggestions.innerHTML = '';
+    return;
+  }
+
+  debounceTimer = setTimeout(async () => {
+    try {
+      const res = await fetch(`/api/search/?q=${encodeURIComponent(q)}`);
+      const data = await res.json();
+      showSuggestions(data);
+    } catch (err) {
+      suggestions.innerHTML = '<div class="list-group-item text-danger">Something went wrong. Please try again.</div>';
+      suggestions.style.display = 'block';
+    }
+  }, DEBOUNCE_MS);
+});
+
+// Hide dropdown when clicking outside the search box
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.search-wrap')) {
+    suggestions.style.display = 'none';
+  }
+});
+
+// Hide dropdown on Escape
+searchInput.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') suggestions.style.display = 'none';
+});
+</script>
+</body>
+</html>
